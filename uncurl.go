@@ -1,3 +1,12 @@
+// package uncurl is Go library to consume a Chrome/Chromium browser "Copy as cURL" string and generate one or more Go *http.Request objects from it
+//
+// In the Chrome or Chromium browser, if you open "Developer tools" and go to the Network tab and
+// navigate somewhere with the browser, you will see a list of requests. Right-clicking one these
+// requests yields a menu with a Copy submenu. One of those options is "Copy as cURL". It allows you to
+// paste a `curl` command to your terminal or editor, one that reproduces the request if run.
+//
+// This library accepts that text input and turns it into a Go request. Further Go requests can be
+// generated with different target URLs while maintaining the same header values.
 package uncurl
 
 import (
