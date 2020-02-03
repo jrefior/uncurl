@@ -1,4 +1,6 @@
-# Uncurl
+Uncurl
+[![Godoc][GodocV2SVG]][GodocV2URL]
+=============
 
 A Go library to consume a Chrome/Chromium browser "Copy as cURL" string and generate one or more Go
 `*http.Request` objects from it
@@ -13,7 +15,7 @@ paste a `curl` command to your terminal or editor, one that reproduces the reque
 This library accepts that text input and turns it into a Go request. Further Go requests can be
 generated with different target URLs while maintaining the same header values.
 
-### Headers
+### Header Value Lists
 
 `net/http` servers do not split request header values into different elements by comma. This was
 suspected during review of standard library source code, and then shown via testing. E.g. a `curl`

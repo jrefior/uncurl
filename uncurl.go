@@ -30,6 +30,7 @@ func init() {
 	curlAcceptEncodingRe = regexp.MustCompile(curlAcceptEncodingPattern)
 }
 
+// Uncurl is the object from which requests are generated. Create one with NewUncurl
 type Uncurl struct {
 	// input is the original curl string
 	input  *string
@@ -51,6 +52,7 @@ type Uncurl struct {
 	AcceptEncoding string
 }
 
+// NewUncurl generates a new Uncurl object from a Chrome/Chromium "Copy as cURL" string
 func NewUncurl(s string) (*Uncurl, error) {
 	if s == "" {
 		return nil, errors.New("NewUncurl called with empty parameter")
@@ -101,7 +103,7 @@ func (un *Uncurl) bodyReadCloser() io.ReadCloser {
 }
 
 // Header creates a new http.Header map and copies all headers from the original curl, with the
-// exception of accept-encoding, to it
+// exception of Accept-Encoding, to it
 func (un *Uncurl) Header() http.Header {
 	h := make(http.Header)
 	for k, v := range un.header {
@@ -117,14 +119,18 @@ func (un *Uncurl) String() string {
 	return *un.input
 }
 
+// Target returns the URL from the original curl string
 func (un *Uncurl) Target() string {
 	return un.target
 }
 
+// Method returns the HTTP method string from the original curl string
 func (un *Uncurl) Method() string {
 	return un.method
 }
 
+// Body returns a copy of the --data argument from the original curl string. The slice will be empty if
+// --data was not present.
 func (un *Uncurl) Body() []byte {
 	b := make([]byte, len(un.body))
 	copy(b, un.body)
