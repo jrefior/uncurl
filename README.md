@@ -49,3 +49,6 @@ headers tested, e.g.:
 
 That behavior is reproduced here on the client side -- no effort is made to split curl `-H` arguments
 into different elements.
+
+[GodocV2SVG]: https://godoc.org/github.com/jrefior/uncurl?status.svg
+[GodocV2URL]: https://godoc.org/github.com/jrefior/uncurl
