@@ -30,7 +30,7 @@ temperature reading in the returned HTTP body.
 
 ### Example 1: Weather in San Diego
 
-```
+```go
 package main
 
 import (
