@@ -99,7 +99,7 @@ with this header:
 
 hit a server handler with this code:
 
-```
+```go
 func handler(w http.ResponseWriter, r *http.Request) {    
     for k, v := range r.Header {    
         fmt.Printf("%28s %2d\n", k, len(v))    
