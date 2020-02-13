@@ -89,7 +89,6 @@ func NewUncurl(b []byte) (*Uncurl, error) {
 			un.AcceptEncoding = string(m[2])
 			continue
 		}
-		// fmt.Printf("%s = %s\n", m[1], m[2])
 		h[string(m[1])] = []string{string(m[2])}
 	}
 	un.header = h
