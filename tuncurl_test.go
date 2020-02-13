@@ -75,7 +75,7 @@ func TestNewUncurl(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		un, err := NewUncurl(test.curl)
+		un, err := NewUncurlString(test.curl)
 		if err != nil {
 			t.Errorf("Error uncurling %d: %s", i, err)
 		}

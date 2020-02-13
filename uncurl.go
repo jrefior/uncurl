@@ -42,7 +42,7 @@ func init() {
 // Uncurl is the object from which requests are generated. Create one with NewUncurl
 type Uncurl struct {
 	// input is the original curl string
-	input  *string
+	input  []byte
 	header http.Header
 
 	// target is the original URL target
@@ -61,46 +61,53 @@ type Uncurl struct {
 	AcceptEncoding string
 }
 
-// NewUncurl generates a new Uncurl object from a Chrome/Chromium "Copy as cURL" string
-func NewUncurl(s string) (*Uncurl, error) {
-	if s == "" {
+// NewUncurl generates a new Uncurl object from a Chrome/Chromium "Copy as cURL" input as bytes.
+// This is useful when you're loading from a file or concerned about efficiency. If you prefer to pass
+// string input instead, use NewUncurlString.
+func NewUncurl(b []byte) (*Uncurl, error) {
+	if b == nil || len(b) == 0 {
 		return nil, errors.New("NewUncurl called with empty parameter")
 	}
 	un := new(Uncurl)
-	un.input = &s
+	un.input = b
 	un.method = `GET`
-	cm := curlTargetRe.FindStringSubmatch(s)
+	cm := curlTargetRe.FindSubmatch(b)
 	if len(cm) < 2 {
-		return nil, fmt.Errorf("Failed to find target URL in curl string %s", s)
+		return nil, fmt.Errorf("Failed to find target URL in curl string %s", b)
 	}
-	un.target = cm[1]
+	un.target = string(cm[1])
 	if _, err := url.ParseRequestURI(un.target); err != nil {
 		return nil, fmt.Errorf("Target url %s failed to parse: %s", un.target, err)
 	}
 	h := make(http.Header)
-	all := curlHeaderRe.FindAllStringSubmatch(s, -1)
+	all := curlHeaderRe.FindAllSubmatch(b, -1)
 	for _, m := range all {
-		if m[1] == "" {
+		if m[1] == nil {
 			continue
 		}
-		if curlAcceptEncodingRe.MatchString(m[1]) { // use default Transport
-			un.AcceptEncoding = m[2]
+		if curlAcceptEncodingRe.Match(m[1]) { // use default Transport
+			un.AcceptEncoding = string(m[2])
 			continue
 		}
 		// fmt.Printf("%s = %s\n", m[1], m[2])
-		h[m[1]] = []string{m[2]}
+		h[string(m[1])] = []string{string(m[2])}
 	}
 	un.header = h
-	dm := curlDataRe.FindStringSubmatch(s)
+	dm := curlDataRe.FindSubmatch(b)
 	if len(dm) == 2 {
 		un.method = `POST`
-		un.body = []byte(dm[1])
+		un.body = dm[1]
 	}
 	_, err := http.NewRequest(un.method, un.target, un.bodyReadCloser())
 	if err != nil {
 		return nil, fmt.Errorf("Unable to create new request from curl: %s", err)
 	}
 	return un, nil
+}
+
+// NewUncurlString generates a new Uncurl object from a Chrome/Chromium "Copy as cURL" string
+func NewUncurlString(s string) (*Uncurl, error) {
+	return NewUncurl([]byte(s))
 }
 
 func (un *Uncurl) bodyReadCloser() io.ReadCloser {
@@ -125,7 +132,7 @@ func (un *Uncurl) Header() http.Header {
 
 // String satisfies the `fmt.Stringer` interface by returning the original curl string
 func (un *Uncurl) String() string {
-	return *un.input
+	return string(un.input)
 }
 
 // Target returns the URL from the original curl string
