@@ -39,7 +39,7 @@ func init() {
 	curlAcceptEncodingRe = regexp.MustCompile(curlAcceptEncodingPattern)
 }
 
-// Uncurl is the object from which requests are generated. Create one with NewUncurl
+// Uncurl is the object from which requests are generated. Create one with New
 type Uncurl struct {
 	// input is the original curl string
 	input  []byte
@@ -61,12 +61,12 @@ type Uncurl struct {
 	AcceptEncoding string
 }
 
-// NewUncurl generates a new Uncurl object from a Chrome/Chromium "Copy as cURL" input as bytes.
+// New generates a new Uncurl object from a Chrome/Chromium "Copy as cURL" input as bytes.
 // This is useful when you're loading from a file or concerned about efficiency. If you prefer to pass
-// string input instead, use NewUncurlString.
-func NewUncurl(b []byte) (*Uncurl, error) {
+// string input instead, use NewString.
+func New(b []byte) (*Uncurl, error) {
 	if b == nil || len(b) == 0 {
-		return nil, errors.New("NewUncurl called with empty parameter")
+		return nil, errors.New("New called with empty parameter")
 	}
 	un := new(Uncurl)
 	un.input = b
@@ -104,9 +104,9 @@ func NewUncurl(b []byte) (*Uncurl, error) {
 	return un, nil
 }
 
-// NewUncurlString generates a new Uncurl object from a Chrome/Chromium "Copy as cURL" string
-func NewUncurlString(s string) (*Uncurl, error) {
-	return NewUncurl([]byte(s))
+// NewString generates a new Uncurl object from a Chrome/Chromium "Copy as cURL" string
+func NewString(s string) (*Uncurl, error) {
+	return New([]byte(s))
 }
 
 func (un *Uncurl) bodyReadCloser() io.ReadCloser {
@@ -154,7 +154,7 @@ func (un *Uncurl) Body() []byte {
 
 // Request returns the Go `*http.Request` version of the curl
 func (un *Uncurl) Request() *http.Request {
-	r, _ := un.NewRequest(un.method, un.target, un.bodyReadCloser()) // as all relevant variables are private, we can rely on the error check done in NewUncurl
+	r, _ := un.NewRequest(un.method, un.target, un.bodyReadCloser()) // as all relevant variables are private, we can rely on the error check done in New
 	r.Header = un.Header()
 	r.GetBody = func() (io.ReadCloser, error) {
 		return un.bodyReadCloser(), nil
@@ -165,7 +165,7 @@ func (un *Uncurl) Request() *http.Request {
 // NewRequest is like Request(), but allows the caller to set the method, url, and body; matching the
 // function signature of http.NewRequest
 func (un *Uncurl) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
-	r, err := http.NewRequest(method, url, body) // as all relevant variables are private, we can rely on the error check done in NewUncurl
+	r, err := http.NewRequest(method, url, body) // as all relevant variables are private, we can rely on the error check done in New
 	if err != nil {
 		return nil, fmt.Errorf("Error building request: %s", err)
 	}
@@ -176,7 +176,7 @@ func (un *Uncurl) NewRequest(method, url string, body io.Reader) (*http.Request,
 // NewRequestWithContext is like NewRequest but allows setting of context as well, matching the
 // signature of http.NewRequestWithContext
 func (un *Uncurl) NewRequestWithContext(ctx context.Context, method, url string, body io.Reader) (*http.Request, error) {
-	r, err := http.NewRequestWithContext(ctx, method, url, body) // as all relevant variables are private, we can rely on the error check done in NewUncurl
+	r, err := http.NewRequestWithContext(ctx, method, url, body) // as all relevant variables are private, we can rely on the error check done in New
 	if err != nil {
 		return nil, fmt.Errorf("Error building request: %s", err)
 	}

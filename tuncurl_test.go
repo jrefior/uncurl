@@ -29,7 +29,7 @@ func headerEq(a, b http.Header) bool {
 	return true
 }
 
-func TestNewUncurl(t *testing.T) {
+func TestNew(t *testing.T) {
 	tests := []struct {
 		curl   string
 		target string
@@ -75,7 +75,7 @@ func TestNewUncurl(t *testing.T) {
 		},
 	}
 	for i, test := range tests {
-		un, err := NewUncurlString(test.curl)
+		un, err := NewString(test.curl)
 		if err != nil {
 			t.Errorf("Error uncurling %d: %s", i, err)
 		}

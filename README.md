@@ -21,7 +21,7 @@ Initial usage of this package typically follows these steps:
 
 1. Navigate in Chrome/Chromium with dev tools open to network tab, find a request you'd like to
    extract, right-click and select Copy => Copy as cURL
-2. In code, call `un, err := uncurl.NewUncurlString(str)` on the extracted string
+2. In code, call `un, err := uncurl.NewString(str)` on the extracted string
 3. Generate new requests via uncurl methods, modify request objects, make requests, and extract new
    URLs from the responses to use in further requests
 
@@ -55,7 +55,7 @@ func init() {
 }
 
 func main() {
-	un, err := uncurl.NewUncurlString(weather)
+	un, err := uncurl.NewString(weather)
 	if err != nil {
 		log.Fatalf("Failed to initialize uncurl from weather string: %s", err)
 	}
